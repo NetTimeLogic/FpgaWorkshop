@@ -12,13 +12,12 @@ entity LedGen is
 end entity;
 
 architecture LedGen_Arch of LedGen is
-constant cUpdateRate    : natural := 50*1000*10;
+constant cUpdateRate    : natural := 50*1000*50;
 
 signal UpdateCnt        : natural;
+signal UpCountIdx       : natural;
 signal Direction        : natural;
-signal UpCountIdx       : natural := 1;
-signal DownCountIdx     : natural;
-signal BrightnessTemp   : std_logic_vector(31 downto 0) := x"0000000F";
+signal BrightnessTemp   : std_logic_vector(31 downto 0);
 
 begin
     Brightness <= BrightnessTemp;
@@ -26,10 +25,9 @@ begin
     process(Clk, ResetN)
     begin
         if(ResetN = '0') then
-            BrightnessTemp <= x"0000000F";
+            BrightnessTemp <= (others => '0');
             Direction <= 0;
-            UpCountIdx <= 1;
-            DownCountIdx <= 0;
+            UpCountIdx <= 0;
             UpdateCnt <= 0;
             
         elsif((Clk'event) and (Clk = '1')) then
@@ -39,34 +37,30 @@ begin
                 UpdateCnt <= 0;
                 
                 for i in 0 to 7 loop
+                    if(unsigned(BrightnessTemp(((i*4)+3) downto (i*4))) > 0) then
+                        BrightnessTemp(((i*4)+3) downto (i*4)) <= std_logic_vector(unsigned(BrightnessTemp(((i*4)+3) downto (i*4))) - 1);
+                    end if;
+                    
                     if(i = UpCountIdx) then
-                        if(unsigned(BrightnessTemp(((i*4)+3) downto (i*4))) < 15) then
-                            BrightnessTemp(((i*4)+3) downto (i*4)) <= std_logic_vector(unsigned(BrightnessTemp(((i*4)+3) downto (i*4))) + 1);
-                        end if;
-                        
-                        if(unsigned(BrightnessTemp(((i*4)+3) downto (i*4))) = 14) then
-                            if(Direction = 0) then
+                        if(unsigned(BrightnessTemp(((i*4)+3) downto (i*4))) < 16-4) then
+                            BrightnessTemp(((i*4)+3) downto (i*4)) <= std_logic_vector(unsigned(BrightnessTemp(((i*4)+3) downto (i*4))) + 4);
+                        else
+                            BrightnessTemp(((i*4)+3) downto (i*4)) <= x"F";
+                            if (Direction = 0) then
                                 if(i < 7) then
                                     UpCountIdx <= UpCountIdx + 1;
                                 else
-                                    Direction <= 1;
                                     UpCountIdx <= UpCountIdx - 1;
+                                    Direction <= 1;
                                 end if;
-                                DownCountIdx <= UpCountIdx;
                             else
                                 if(i > 0) then
                                     UpCountIdx <= UpCountIdx - 1;
                                 else
-                                    Direction <= 0;
                                     UpCountIdx <= UpCountIdx + 1;
+                                    Direction <= 0;
                                 end if;
-                                DownCountIdx <= UpCountIdx;
                             end if;
-                        end if;
-                    end if;
-                    if(i = DownCountIdx) then
-                        if(unsigned(BrightnessTemp(((i*4)+3) downto (i*4))) > 0) then
-                            BrightnessTemp(((i*4)+3) downto (i*4)) <= std_logic_vector(unsigned(BrightnessTemp(((i*4)+3) downto (i*4))) - 1);
                         end if;
                     end if;
                 end loop;

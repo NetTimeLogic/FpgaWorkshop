@@ -2,10 +2,10 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity Transmitter_tb is
+entity Transceiver_tb is
 end entity;
 
-architecture Transmitter_tb_Arch of Transmitter_tb is
+architecture Transceiver_tb_Arch of Transceiver_tb is
 
 component Transmitter is
     port 
@@ -16,6 +16,18 @@ component Transmitter is
         SClk            : out std_logic;
         SEn             : out std_logic;
         SData           : out std_logic
+    );
+end component;
+
+component Receiver is
+    port 
+    (
+        Clk             : in  std_logic;
+        ResetN          : in  std_logic;
+        Brightness      : out std_logic_vector(31 downto 0);
+        SClk            : in  std_logic;
+        SEn             : in  std_logic;
+        SData           : in  std_logic
     );
 end component;
 
@@ -61,25 +73,6 @@ begin
     process
     variable BrightnessRxTemp    : std_logic_vector(31 downto 0);
     begin
-        BrightnessRx <= (others => '0');
-        wait until (ResetN'event and (ResetN = '1'));
-        loop
-            wait until ((SClk'event and (SClk = '0')) and (SEn = '1'));
-            for i in 0 to 31 loop
-                BrightnessRxTemp(i) := SData;
-                wait until (SClk'event and (SClk = '0'));
-            end loop;
-            BrightnessRx <= BrightnessRxTemp;
-            assert (SEn = '0')
-            report "SEn didn't go low"
-            severity error;
-        end loop;
-        wait;
-    end process;
-        
-    process
-    variable BrightnessRxTemp    : std_logic_vector(31 downto 0);
-    begin
         BrightnessRxTemp := (others => '0');
         wait until (ResetN'event and (ResetN = '1'));
         loop
@@ -92,7 +85,7 @@ begin
         wait;
     end process;
     
-    Dut : Transmitter
+    DutTx : Transmitter
     port map
     (
         Clk             => Clk,     
@@ -103,4 +96,15 @@ begin
         SData           => SData
     );  
     
-end Transmitter_tb_Arch;
+    DutRx : Receiver
+    port map
+    (
+        Clk             => Clk,     
+        ResetN          => ResetN,  
+        Brightness      => BrightnessRx, 
+        SClk            => SClk,
+        SEn             => SEn,
+        SData           => SData
+    );  
+    
+end Transceiver_tb_Arch;

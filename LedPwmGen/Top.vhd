@@ -8,14 +8,7 @@ entity Top is
         Clk             : in  std_logic;
         ResetN          : in  std_logic;
         ButtonN         : in  std_logic;
-        Led             : out std_logic_vector(7 downto 0);
-        SClkOut         : out std_logic;
-        SEnOut          : out std_logic;
-        SDataOut        : out std_logic;
-        SClkIn          : in  std_logic;
-        SEnIn           : in  std_logic;
-        SDataIn         : in  std_logic
-
+        Led             : out std_logic_vector(7 downto 0)
     );
 end entity;
 

@@ -1,0 +1,19 @@
+C:/Data/FpgaWorkshop/LedPwmGen/LedGen.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Data/FpgaWorkshop/LedPwmGen/LedGen.vhd
+Model Technology ModelSim ALTERA vcom 10.4d Compiler 2015.12 Dec 30 2015
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package NUMERIC_STD
+-- Compiling entity LedGen
+-- Compiling architecture LedGen_Arch of LedGen
+
+} {} {}} C:/Data/FpgaWorkshop/LedPwmGen/tb/LedGen_tb.vhd {1 {vcom -work work -2002 -explicit -stats=none C:/Data/FpgaWorkshop/LedPwmGen/tb/LedGen_tb.vhd
+Model Technology ModelSim ALTERA vcom 10.4d Compiler 2015.12 Dec 30 2015
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package NUMERIC_STD
+-- Compiling entity LedGen_tb
+-- Compiling architecture LedGen_tb_Arch of LedGen_tb
+
+} {} {}}

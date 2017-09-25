@@ -2,20 +2,20 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity Transmitter_tb is
+entity Receiver_tb is
 end entity;
 
-architecture Transmitter_tb_Arch of Transmitter_tb is
+architecture Receiver_tb_Arch of Receiver_tb is
 
-component Transmitter is
+component Receiver is
     port 
     (
         Clk             : in  std_logic;
         ResetN          : in  std_logic;
-        Brightness      : in  std_logic_vector(31 downto 0);
-        SClk            : out std_logic;
-        SEn             : out std_logic;
-        SData           : out std_logic
+        Brightness      : out std_logic_vector(31 downto 0);
+        SClk            : in  std_logic;
+        SEn             : in  std_logic;
+        SData           : in  std_logic
     );
 end component;
 
@@ -59,24 +59,34 @@ begin
     end process;
         
     process
-    variable BrightnessRxTemp    : std_logic_vector(31 downto 0);
     begin
-        BrightnessRx <= (others => '0');
-        wait until (ResetN'event and (ResetN = '1'));
+        SClk <= '0';
         loop
-            wait until ((SClk'event and (SClk = '0')) and (SEn = '1'));
-            for i in 0 to 31 loop
-                BrightnessRxTemp(i) := SData;
-                wait until (SClk'event and (SClk = '0'));
-            end loop;
-            BrightnessRx <= BrightnessRxTemp;
-            assert (SEn = '0')
-            report "SEn didn't go low"
-            severity error;
+            wait for 500 ns;
+            SClk <= not SClk;
         end loop;
         wait;
     end process;
-        
+    
+    process
+    begin
+        SEn <= '0';
+        SData <= '0';
+        wait until (ResetN'event and (ResetN = '1'));
+        loop
+            wait for 1 ms;
+            for i in 0 to 31 loop
+                wait until (SClk'event and (SClk = '1'));
+                SEn <= '1';
+                SData <= BrightnessTx(i);
+            end loop;    
+            wait until (SClk'event and (SClk = '1'));
+            SEn <= '0';
+            SData <= '0';
+        end loop;
+        wait;
+    end process;
+    
     process
     variable BrightnessRxTemp    : std_logic_vector(31 downto 0);
     begin
@@ -92,15 +102,15 @@ begin
         wait;
     end process;
     
-    Dut : Transmitter
+    Dut : Receiver
     port map
     (
         Clk             => Clk,     
         ResetN          => ResetN,  
-        Brightness      => BrightnessTx, 
+        Brightness      => BrightnessRx, 
         SClk            => SClk,
         SEn             => SEn,
         SData           => SData
     );  
     
-end Transmitter_tb_Arch;
+end Receiver_tb_Arch;
