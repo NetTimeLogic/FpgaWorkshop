@@ -7,13 +7,19 @@ entity LedGen is
     (
         Clk             : in  std_logic;
         ResetN          : in  std_logic;
+        ButtonN         : in  std_logic;
         Brightness      : out std_logic_vector(31 downto 0)
     );
 end entity;
 
 architecture LedGen_Arch of LedGen is
-constant cUpdateRate    : natural := 50*1000*50;
+constant cUpdateRate    : natural := 50*1000*100;
 
+signal ButtonN_f        : std_logic;
+signal ButtonN_ff       : std_logic;
+signal ButtonNOld       : std_logic;
+
+signal UpdateInc        : natural := 1;
 signal UpdateCnt        : natural;
 signal UpCountIdx       : natural;
 signal Direction        : natural;
@@ -25,14 +31,31 @@ begin
     process(Clk, ResetN)
     begin
         if(ResetN = '0') then
-            BrightnessTemp <= (others => '0');
-            Direction <= 0;
-            UpCountIdx <= 0;
+            ButtonN_f <= '0';
+            ButtonN_ff <= '0';
+            ButtonNOld <= '0';
+            
+            UpdateInc <= 1;
             UpdateCnt <= 0;
+            UpCountIdx <= 0;
+            Direction <= 0;
+            BrightnessTemp <= (others => '0');
             
         elsif((Clk'event) and (Clk = '1')) then
+            ButtonN_f <= ButtonN;
+            ButtonN_ff <= ButtonN_f;
+            ButtonNOld <= ButtonN_ff;
+        
+            if ((ButtonNOld = '1') and (ButtonN_ff = '0')) then
+                if (UpdateInc < 16) then
+                    UpdateInc <= UpdateInc + 1;
+                else
+                    UpdateInc <= 1;
+                end if;
+            end if;
+            
             if(UpdateCnt < cUpdateRate-1) then
-                UpdateCnt <= UpdateCnt + 1;
+                UpdateCnt <= UpdateCnt + UpdateInc;
             else
                 UpdateCnt <= 0;
                 

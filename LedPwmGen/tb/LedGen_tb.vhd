@@ -12,6 +12,7 @@ component LedGen is
     (
         Clk             : in  std_logic;
         ResetN          : in  std_logic;
+        ButtonN         : in  std_logic;
         Brightness      : out std_logic_vector(31 downto 0)
     );
 end component;
@@ -45,6 +46,7 @@ begin
     (
         Clk             => Clk,     
         ResetN          => ResetN,  
+        ButtonN         => '1',
         Brightness      => Brightness 
     );  
     
