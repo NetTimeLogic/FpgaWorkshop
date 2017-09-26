@@ -53,10 +53,10 @@ begin
     LedGen_Inst : LedGen
     port map
     (
-        Clk         => Clk,
-        ResetN      => ResetN,
-        ButtonN     => ButtonN,
-        Brightness  => Brightness
+        Clk             => Clk,
+        ResetN          => ResetN,
+        ButtonN         => ButtonN,
+        Brightness      => Brightness
     );
     
 end Top_Arch;

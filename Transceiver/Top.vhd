@@ -85,32 +85,32 @@ begin
     LedGen_Inst : LedGen
     port map
     (
-        Clk         => Clk,
-        ResetN      => ResetN,
-        ButtonN     => ButtonN,
-        Brightness  => BrightnessTx
+        Clk             => Clk,
+        ResetN          => ResetN,
+        ButtonN         => ButtonN,
+        Brightness      => BrightnessTx
     );
     
     Transmitter_Inst : Transmitter
     port map
     (
-        Clk         => Clk,
-        ResetN      => ResetN,
-        Brightness  => BrightnessTx,
-        SClk        => SClkOut,
-        SEn         => SEnOut,  
-        SData       => SDataOut
+        Clk             => Clk,
+        ResetN          => ResetN,
+        Brightness      => BrightnessTx,
+        SClk            => SClkOut,
+        SEn             => SEnOut,  
+        SData           => SDataOut
     );
     
     Receiver_Inst : Receiver
     port map
     (
-        Clk         => Clk,
-        ResetN      => ResetN,
-        Brightness  => BrightnessRx,
-        SClk        => SClkIn,
-        SEn         => SEnIn,   
-        SData       => SDataIn
+        Clk             => Clk,
+        ResetN          => ResetN,
+        Brightness      => BrightnessRx,
+        SClk            => SClkIn,
+        SEn             => SEnIn,   
+        SData           => SDataIn
     );
     
 end Top_Arch;
